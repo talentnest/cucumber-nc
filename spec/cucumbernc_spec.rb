@@ -1,7 +1,12 @@
-require 'nc'
+require 'cucumber_nc'
 
-describe Nc do
-  let(:formatter)   { Nc.new(StringIO.new) }
+describe CucumberNc do
+  let(:formatter)   do
+    # TODO: Implement me....
+    #step_mocker =
+    CucumberNc.new(step_mocker, nil, nil)
+  end
+
   let(:current_dir) { File.basename(File.expand_path '.') }
 
   # emoji
