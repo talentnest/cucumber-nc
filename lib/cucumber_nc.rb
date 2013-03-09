@@ -71,9 +71,9 @@ class CucumberNc
     # 5 scenarios (1 undefined, 3 pending, 1 passed)
     case counts.count
     when 4
-      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})\n\n"
+      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})\n"
     else
-      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts.join(', ')})\n\n"
+      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts.join(', ')})\n"
     end
 
     counts = []
@@ -86,11 +86,11 @@ class CucumberNc
     # 35 steps (23 skipped, 1 undefined, 3 pending, 8 passed)
     case counts.count
     when 4
-      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})\n\n"
+      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})\n"
     when 5
-      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]}, #{counts[4]})\n\n"
+      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]}, #{counts[4]})\n"
     else
-      summary << "#{steps} #{pluralize(steps, "step")} (#{ counts.join(', ') })\n\n"
+      summary << "#{steps} #{pluralize(steps, "step")} (#{ counts.join(', ') })\n"
     end
 
     summary
