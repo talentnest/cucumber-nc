@@ -54,7 +54,7 @@ class CucumberNc
     scenarios_undefined = step_mother.scenarios(:undefined).count
     scenarios_pending = step_mother.scenarios(:pending).count
     scenarios_passing = step_mother.scenarios(:passed).count
-    
+
     steps = step_mother.steps.count
     steps_failed = step_mother.steps(:failed).count
     steps_skipped = step_mother.steps(:skipped).count
@@ -69,7 +69,12 @@ class CucumberNc
     counts << "#{scenarios_passing} passed" if scenarios_passing > 0
 
     # 5 scenarios (1 undefined, 3 pending, 1 passed)
-    summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts.join(', ')})\n\n"
+    case counts.count
+    when 4
+      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})\n\n"
+    else
+      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts.join(', ')})\n\n"
+    end
 
     counts = []
     counts << "#{steps_undefined} undefined" if steps_undefined > 0
@@ -79,7 +84,14 @@ class CucumberNc
     counts << "#{steps_passing} passed" if steps_passing > 0
 
     # 35 steps (23 skipped, 1 undefined, 3 pending, 8 passed)
-    summary << "#{steps} #{pluralize(steps, "step")} (#{counts.join(', ')})"
+    case counts.count
+    when 4
+      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})\n\n"
+    when 5
+      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]}, #{counts[4]})\n\n"
+    else
+      summary << "#{steps} #{pluralize(steps, "step")} (#{ counts.join(', ') })\n\n"
+    end
 
     summary
   end
@@ -87,7 +99,7 @@ class CucumberNc
   def print_summary(features)
     body = []
     body << summary_line(features)
-    
+
     # 0m0.024s
     body << "#{ format_duration(features.duration) }"
 
