@@ -48,13 +48,13 @@ class CucumberNc
     (num == 1) ? str : "#{str}s"
   end
 
-  def summary_line(features, failures)
+  def summary_line(features)
     scenarios = step_mother.scenarios.count
-    scenarios_failed = failures.count
+    scenarios_failed = step_mother.scenarios(:failed).count
     scenarios_undefined = step_mother.scenarios(:undefined).count
     scenarios_pending = step_mother.scenarios(:pending).count
-    scenarios_passing = step_mother.steps(:passed).count -
-      (scenarios_failed + scenarios_undefined + scenarios_pending)
+    scenarios_passing = step_mother.scenarios(:passed).count
+
     steps = step_mother.steps.count
     steps_failed = step_mother.steps(:failed).count
     steps_skipped = step_mother.steps(:skipped).count
@@ -62,49 +62,53 @@ class CucumberNc
     steps_pending = step_mother.steps(:pending).count
     steps_passing = step_mother.steps(:passed).count
 
+    counts = []
+    counts << "#{scenarios_undefined} undefined" if scenarios_undefined > 0
+    counts << "#{scenarios_pending} pending" if scenarios_pending > 0
+    counts << "#{scenarios_failed} failed" if scenarios_failed > 0
+    counts << "#{scenarios_passing} passed" if scenarios_passing > 0
+
     # 5 scenarios (1 undefined, 3 pending, 1 passed)
+    case counts.count
+    when 4
+      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})\n"
+    else
+      summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts.join(', ')})\n"
+    end
+
+    counts = []
+    counts << "#{steps_undefined} undefined" if steps_undefined > 0
+    counts << "#{steps_skipped} skipped" if steps_skipped > 0
+    counts << "#{steps_pending} pending" if steps_pending > 0
+    counts << "#{steps_failed} failed" if steps_failed > 0
+    counts << "#{steps_passing} passed" if steps_passing > 0
+
     # 35 steps (23 skipped, 1 undefined, 3 pending, 8 passed)
-    # 0m0.024s
-
-    # 5 scenarios (1 undefined, 3 pending, 1 passed)
-    # 35 steps (26 skipped, 1 undefined, 3 pending, 5 passed)
-
-    counts = []
-    counts << "#{scenarios_failed} fail" if(scenarios_failed > 0)
-    counts << "#{scenarios_undefined} undef" if(scenarios_undefined > 0)
-    counts << "#{scenarios_pending} pend" if(scenarios_pending > 0)
-    counts << "#{scenarios_passing} pass"
-
-    summary = "#{scenarios} #{pluralize(scenarios, "scenario")} (#{counts.join(', ')})\n\n"
-
-    counts = []
-    counts << "#{steps_failed} fail" if(steps_failed > 0)
-    counts << "#{steps_skipped} skip" if(steps_skipped > 0)
-    counts << "#{steps_undefined} undef" if(steps_undefined > 0)
-    counts << "#{steps_pending} pend" if(steps_pending > 0)
-    counts << "#{steps_passing} pass"
-
-    summary << "#{steps} #{pluralize(steps, "step")} (#{counts.join(', ')})"
+    case counts.count
+    when 4
+      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]})"
+    when 5
+      summary << "#{steps} #{pluralize(steps, "step")} (#{counts[0]}, #{counts[1]}, #{counts[2]},\n#{counts[3]}, #{counts[4]})"
+    else
+      summary << "#{steps} #{pluralize(steps, "step")} (#{ counts.join(', ') })"
+    end
 
     summary
   end
 
   def print_summary(features)
-    failures = step_mother.
-      scenarios(:failed).
-      select { |s| s.is_a?(Cucumber::Ast::Scenario) || s.is_a?(Cucumber::Ast::OutlineTable::ExampleRow) }.
-      collect { |s| (s.is_a?(Cucumber::Ast::OutlineTable::ExampleRow)) ? s.scenario_outline : s }
-
     body = []
-    body << "Finished in #{format_duration(features.duration)}"
-    body << summary_line(features, failures)
+    body << summary_line(features)
+
+    # 0m0.024s
+    body << "#{ format_duration(features.duration) }"
 
     name = File.basename(File.expand_path('.'))
 
-    title = if(!failures.empty?)
-      "\u26D4 #{name}: #{failures.count} failed #{pluralize(failures.count, 'scenario')}"
+    title = unless step_mother.scenarios(:failed).empty?
+      "\u26D4 #{ name }: #{ step_mother.scenarios(:failed).count } failed #{ pluralize(step_mother.scenarios(:failed).count, 'scenario') }"
     else
-      "\u2705 #{name}: Success"
+      "\u2705 #{ name }: Success"
     end
 
     say title, body.join("\n")
