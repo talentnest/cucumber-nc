@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |gem|
   gem.name          = 'cucumber-nc'
-  gem.version       = '0.0.1'
+  gem.version       = '0.0.2'
   gem.authors       = ['Jon Frisby', 'Odin Dutton']
   gem.email         = ['jfrisby@mrjoy.com', 'odindutton@gmail.com']
   gem.description   = 'https://github.com/MrJoy/cucumber-nc'
