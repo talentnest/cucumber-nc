@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://github.com/MrJoy/cucumber-nc'
 
   gem.add_dependency 'terminal-notifier', '~> 1.6.2'
-  gem.add_dependency 'cucumber', '~> 1.2'
+  gem.add_dependency 'cucumber', '>= 1.2'
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = []
